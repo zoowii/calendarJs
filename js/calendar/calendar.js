@@ -3,10 +3,10 @@ define(function (require, exports, module) {
     var DayInfo = function (date) {
         return {
             year:date.getFullYear(),
-            month: date.getMonth() + 1,
+            month:date.getMonth() + 1,
             monthLabel:months[date.getMonth()],
             day:date.getDate(),
-            weekDay:date.getDay(),
+            weekDay:date.getDay() == 0 ? 7 : date.getDay(),
             hour:date.getHours(),
             minute:date.getMinutes(),
             second:date.getSeconds(),
@@ -54,46 +54,46 @@ define(function (require, exports, module) {
             && dayInfo1.day == dayInfo2.day;
     };
 
-    exports.isSameMonth = function(monthInfo1, monthInfo2) {
+    exports.isSameMonth = function (monthInfo1, monthInfo2) {
         return monthInfo1.year == monthInfo2.year
             && monthInfo1.month == monthInfo2.month;
     };
 
-    exports.getMonthInfo = function(dayInfo) {
+    exports.getMonthInfo = function (dayInfo) {
         var tmp = new Date(dayInfo.date);
         tmp.setDate(1);
         return new DayInfo(tmp);
     };
 
-    exports.getYearInfo = function(dayInfoOrMonthInfo) {
+    exports.getYearInfo = function (dayInfoOrMonthInfo) {
         var tmp = new Date(dayInfo.date);
         tmp.setDate(1);
         tmp.setMonth(0);
         return new DayInfo(tmp);
     };
 
-    exports.getLastMonth = function(dayInfo) {
-         var tmpDay = new Date(dayInfo.date);
+    exports.getLastMonth = function (dayInfo) {
+        var tmpDay = new Date(dayInfo.date);
         tmpDay.setDate(1);
         tmpDay.setMonth(tmpDay.getMonth() - 1);
         return new DayInfo(tmpDay);
     };
 
-    exports.getNextMonth = function(dayInfo) {
+    exports.getNextMonth = function (dayInfo) {
         var tmpDay = new Date(dayInfo.date);
         tmpDay.setDate(1);
         tmpDay.setMonth(tmpDay.getMonth() + 1);
         return new DayInfo(tmpDay);
     };
 
-    exports.getLastYear = function(dayInfoOrMonthInfo) {
+    exports.getLastYear = function (dayInfoOrMonthInfo) {
         var tmpDay = new Date(dayInfoOrMonthInfo.date);
         tmpDay.setDate(1);
         tmpDay.setFullYear(tmpDay.getFullYear() - 1);
         return new DayInfo(tmpDay);
     };
 
-    exports.getNextYear = function(dayInfoOrMonthInfo) {
+    exports.getNextYear = function (dayInfoOrMonthInfo) {
         var tmpDay = new Date(dayInfoOrMonthInfo.date);
         tmpDay.setDate(1);
         tmpDay.setFullYear(tmpDay.getFullYear() + 1);
@@ -105,26 +105,26 @@ define(function (require, exports, module) {
      * @param dayInfo
      * @param count
      */
-    exports.daysAround = function(dayInfo, count) {
+    exports.daysAround = function (dayInfo, count) {
         var tmpDay = new Date(dayInfo.date);
         tmpDay.setDate(tmpDay.getDate() + count);
         return new DayInfo(tmpDay);
     };
 
-    exports.yearsAround = function(dateInfo, count) {
+    exports.yearsAround = function (dateInfo, count) {
         var tmpDay = new Date(dateInfo.date);
         tmpDay.setDate(1);
         tmpDay.setFullYear(tmpDay.getFullYear() + count);
         return new DayInfo(tmpDay);
     };
 
-    exports.toString = function(dayInfo, format) {
-        if(format == 'Y-M') {
+    exports.toString = function (dayInfo, format) {
+        if (format == 'Y-M') {
             return dayInfo.year + '年' + dayInfo.month + '月';
-        } else if(format == 'Y') {
-           return dayInfo.year + '年';
-        } else if(format == 'Y-RANGE') {
-            return parseInt(dayInfo.year/10) + '0 - ' + parseInt(dayInfo.year/10) + '9';
+        } else if (format == 'Y') {
+            return dayInfo.year + '年';
+        } else if (format == 'Y-RANGE') {
+            return parseInt(dayInfo.year / 10) + '0 - ' + parseInt(dayInfo.year / 10) + '9';
         } else {
             return dayInfo.year + '年' + dayInfo.month + '月' + dayInfo.day + '日';
         }

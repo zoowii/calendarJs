@@ -26,9 +26,9 @@ define(function (require, exports, module) {
         var CalendarClass = function (dateSelectHandler) {
 
             return {
-                daySelectHandler: dateSelectHandler,
-                monthSelectHandler: undefined,
-                yearSelectHandler: undefined,
+                daySelectHandler:dateSelectHandler,
+                monthSelectHandler:undefined,
+                yearSelectHandler:undefined,
                 currentMonth:new calendar.DayInfo(firstDayOfCurrent),
                 selectedDay:null,
                 today:today,
@@ -110,18 +110,22 @@ define(function (require, exports, module) {
                     var line, tmpLine;
                     var j = 0;
                     var tmpDayItem = $("");
+                    var showMoreInUp = false; // 在第一行之前显示上个月的一周
                     for (var i in daysOfCurrentMonth) {
                         var day = daysOfCurrentMonth[i];
                         tmpDayItem = generateItem(day);
                         if (i == 0) { // 本月第一天
-                            tmpLine = $("<tr></tr>");
-                            for (j = 7; j > 0; j--) {
-                                var td = calendar.daysAround(day, -(j + (day.weekDay % 7)));
-                                var toAdd = generateItem(td);
-                                toAdd.addClass('lastMonthItem');
-                                tmpLine.append(toAdd);
+                            if (day.weekDay % 7 == 0) {
+                                tmpLine = $("<tr></tr>");
+                                for (j = 7; j > 0; j--) {
+                                    var td = calendar.daysAround(day, -(j + (day.weekDay % 7)));
+                                    var toAdd = generateItem(td);
+                                    toAdd.addClass('lastMonthItem');
+                                    tmpLine.append(toAdd);
+                                }
+                                showMoreInUp = true;
+                                month_table_body.append(tmpLine);
                             }
-                            month_table_body.append(tmpLine);
                             line = $("<tr></tr>");
                             for (j = 0; j < day.weekDay % 7; j++) { // 本月第一天前weekday % 7天
                                 var td = calendar.daysAround(day, -(day.weekDay % 7 - j));
@@ -141,7 +145,7 @@ define(function (require, exports, module) {
                                 line = $("<tr></tr>");
                                 month_table_body.append(line);
                             } else if (i == daysOfCurrentMonth.length - 1) { // 最后一天
-                                for (j = 0; j < 6 - day.weekDay % 7; j++) { // 最后一天后集天
+                                for (j = 0; j < 6 - day.weekDay % 7; j++) { // 最后一天后几天
                                     var td = calendar.daysAround(day, j + 1);
                                     var toAdd = generateItem(td);
                                     toAdd.addClass('nextMonthItem');
@@ -153,14 +157,16 @@ define(function (require, exports, module) {
                             tmpDayItem.addClass('today-item');
                         }
                         if (i == daysOfCurrentMonth.length - 1) { // 最后一天后面加上下个月的前几天
-                            tmpLine = $("<tr></tr>");
-                            for (j = 1; j <= 7; j++) {
-                                var td = calendar.daysAround(day, 6 - day.weekDay + j);
-                                var toAdd = generateItem(td);
-                                toAdd.addClass('nextMonthItem');
-                                tmpLine.append(toAdd);
+                            if (showMoreInUp == false) {
+                                tmpLine = $("<tr></tr>");
+                                for (j = 1; j <= 7; j++) {
+                                    var td = calendar.daysAround(day, 6 - day.weekDay + j);
+                                    var toAdd = generateItem(td);
+                                    toAdd.addClass('nextMonthItem');
+                                    tmpLine.append(toAdd);
+                                }
+                                month_table_body.append(tmpLine);
                             }
-                            month_table_body.append(tmpLine);
                         }
                     }
                     calendarTable.append(month_table_body);
@@ -218,13 +224,13 @@ define(function (require, exports, module) {
                     }))();
                 }, 100),
                 // 绑定事件
-                daySelect: function(func) {
+                daySelect:function (func) {
                     this.daySelectHandler = func;
                 },
-                monthSelect: function(func) {
+                monthSelect:function (func) {
                     this.monthSelectHandler = func;
                 },
-                yearSelect: function(func) {
+                yearSelect:function (func) {
                     this.yearSelectHandler = func;
                 },
                 onItemClick:_.debounce(function (clickedElement) {
@@ -233,14 +239,16 @@ define(function (require, exports, module) {
                         var tmp = date.split('-');
                         date = new Date(tmp[0], tmp[1] - 1, tmp[2]);
                         var dateInfo = new calendar.DayInfo(date);
-                        if (dateInfo.month < this.currentMonth.month) {
-                            this.previous();
-                        } else if (dateInfo.month > this.currentMonth.month) {
-                            this.next();
-                        } else {
+                        if (calendar.isSameMonth(dateInfo, this.currentMonth)) {
                             if (_.isFunction(this.daySelectHandler)) {
                                 this.daySelectHandler(dateInfo);
                             }
+                        } else if (dateInfo.date < new Date(this.currentMonth.year, this.currentMonth.month - 1, 1)) {
+                            this.previous();
+                        } else if (dateInfo.date >= new Date(this.currentMonth.year, this.currentMonth.month, 1)) {
+                            this.next();
+                        } else {
+
                         }
                     } else if (this.type == 'month') {
                         var month = $(clickedElement).attr('data');
@@ -250,7 +258,7 @@ define(function (require, exports, module) {
                         this.type = 'day';
                         var dateInfo = new calendar.DayInfo(tmpDay);
                         this.changePage(dateInfo);
-                        if(_.isFunction(this.monthSelectHandler)) {
+                        if (_.isFunction(this.monthSelectHandler)) {
                             this.monthSelectHandler(dateInfo);
                         }
                     } else if (this.type == 'year') {
@@ -261,7 +269,7 @@ define(function (require, exports, module) {
                         this.type = 'month';
                         var dateInfo = new calendar.DayInfo(tmpDay);
                         this.changePage(dateInfo);
-                        if(_.isFunction(this.yearSelectHandler)) {
+                        if (_.isFunction(this.yearSelectHandler)) {
                             this.yearSelectHandler(dateInfo);
                         }
                     }
@@ -304,31 +312,31 @@ define(function (require, exports, module) {
             next:function () {
                 return calendarState.next();
             },
-            changeToDay: function(date) {
+            changeToDay:function (date) {
                 calendarState.changeType('day');
-                if(date != undefined && date instanceof Date)  {
-                calendarState.changePage(new calendar.DayInfo(date));
+                if (date != undefined && date instanceof Date) {
+                    calendarState.changePage(new calendar.DayInfo(date));
                 }
             },
-            changeToMonth: function(date) {
+            changeToMonth:function (date) {
                 calendarState.changeType('month');
-                if(date != undefined && date instanceof Date) {
+                if (date != undefined && date instanceof Date) {
                     calendarState.changePage(new calendar.DayInfo(date));
                 }
             },
-            changeToYear: function(date) {
+            changeToYear:function (date) {
                 calendarState.changeType('year');
-                if(date != undefined && date instanceof Date) {
+                if (date != undefined && date instanceof Date) {
                     calendarState.changePage(new calendar.DayInfo(date));
                 }
             },
-            daySelect: function(func) {
+            daySelect:function (func) {
                 calendarState.daySelect(func);
-            } ,
-            monthSelect: function(func) {
+            },
+            monthSelect:function (func) {
                 calendarState.monthSelect(func);
             },
-            yearSelect: function(func) {
+            yearSelect:function (func) {
                 calendarState.yearSelect(func);
             }
         };
