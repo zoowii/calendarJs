@@ -26,6 +26,9 @@ define(function (require, exports, module) {
         var CalendarClass = function (dateSelectHandler) {
 
             return {
+                daySelectHandler: dateSelectHandler,
+                monthSelectHandler: undefined,
+                yearSelectHandler: undefined,
                 currentMonth:new calendar.DayInfo(firstDayOfCurrent),
                 selectedDay:null,
                 today:today,
@@ -42,7 +45,7 @@ define(function (require, exports, module) {
                         this.showYearSelect();
                     }
                 },
-                backToDoday: function() {
+                backToDoday:function () {
                     this.type = 'day';
                     this.changePage(this.today);
                 },
@@ -179,7 +182,7 @@ define(function (require, exports, module) {
                             }
                             td.addClass('month-item');
                             td.addClass('date-item');
-                            td.attr('data', 4 + i + j + 1);
+                            td.attr('data', 4 * i + j + 1);
                             tr.append(td);
                         }
                         tbody.append(tr);
@@ -214,6 +217,16 @@ define(function (require, exports, module) {
                         calendarOuter.show();
                     }))();
                 }, 100),
+                // 绑定事件
+                daySelect: function(func) {
+                    this.daySelectHandler = func;
+                },
+                monthSelect: function(func) {
+                    this.monthSelectHandler = func;
+                },
+                yearSelect: function(func) {
+                    this.yearSelectHandler = func;
+                },
                 onItemClick:_.debounce(function (clickedElement) {
                     if (this.type == 'day') {
                         var date = $(clickedElement).attr('date');
@@ -225,8 +238,8 @@ define(function (require, exports, module) {
                         } else if (dateInfo.month > this.currentMonth.month) {
                             this.next();
                         } else {
-                            if (_.isFunction(dateSelectHandler)) {
-                                dateSelectHandler(dateInfo);
+                            if (_.isFunction(this.daySelectHandler)) {
+                                this.daySelectHandler(dateInfo);
                             }
                         }
                     } else if (this.type == 'month') {
@@ -235,14 +248,22 @@ define(function (require, exports, module) {
                         tmpDay.setDate(1);
                         tmpDay.setMonth(month - 1);
                         this.type = 'day';
-                        this.changePage(new calendar.DayInfo(tmpDay));
+                        var dateInfo = new calendar.DayInfo(tmpDay);
+                        this.changePage(dateInfo);
+                        if(_.isFunction(this.monthSelectHandler)) {
+                            this.monthSelectHandler(dateInfo);
+                        }
                     } else if (this.type == 'year') {
                         var year = $(clickedElement).attr('data');
                         var tmpDay = new Date(this.currentMonth.date);
                         tmpDay.setDate(1);
                         tmpDay.setFullYear(year);
                         this.type = 'month';
-                        this.changePage(new calendar.DayInfo(tmpDay));
+                        var dateInfo = new calendar.DayInfo(tmpDay);
+                        this.changePage(dateInfo);
+                        if(_.isFunction(this.yearSelectHandler)) {
+                            this.yearSelectHandler(dateInfo);
+                        }
                     }
                 }, 100)
             }
@@ -262,12 +283,54 @@ define(function (require, exports, module) {
             calendarState.next();
         });
 
-        backToTodayBtn.click(function() {
+        backToTodayBtn.click(function () {
             calendarState.backToDoday();
         });
 
         currentPageSelectShow.click(_.debounce(function () {
             calendarState.triggerTypeChange();
         }, 200));
+
+        return {
+            getCurrentPage:function () {
+                return calendarState.currentMonth;
+            },
+            getCurrentPageType:function () {
+                return calendarState.type;
+            },
+            previous:function () {
+                return calendarState.previous();
+            },
+            next:function () {
+                return calendarState.next();
+            },
+            changeToDay: function(date) {
+                calendarState.changeType('day');
+                if(date != undefined && date instanceof Date)  {
+                calendarState.changePage(new calendar.DayInfo(date));
+                }
+            },
+            changeToMonth: function(date) {
+                calendarState.changeType('month');
+                if(date != undefined && date instanceof Date) {
+                    calendarState.changePage(new calendar.DayInfo(date));
+                }
+            },
+            changeToYear: function(date) {
+                calendarState.changeType('year');
+                if(date != undefined && date instanceof Date) {
+                    calendarState.changePage(new calendar.DayInfo(date));
+                }
+            },
+            daySelect: function(func) {
+                calendarState.daySelect(func);
+            } ,
+            monthSelect: function(func) {
+                calendarState.monthSelect(func);
+            },
+            yearSelect: function(func) {
+                calendarState.yearSelect(func);
+            }
+        };
     }
 });
