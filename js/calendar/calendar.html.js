@@ -53,7 +53,7 @@ define(function (require, exports, module) {
                     this.currentMonth = monthDayInfo;
                     this.onChangePage();
                 },
-                triggerTypeChange:_.debounce(function () {
+                triggerTypeChange:_.throttle(function () {
                     if (this.type == 'day') {
                         this.changeType('month');
                     } else if (this.type == 'month') {
@@ -92,7 +92,7 @@ define(function (require, exports, module) {
                         this.changePage(tmpDayInfo);
                     }
                 },
-                showDaySelect:_.debounce(function () {
+                showDaySelect:_.throttle(function () {
                     function generateItem(dayInfo) {
                         var dateVal = dayInfo.year + "-" + dayInfo.month + "-" + dayInfo.day;
                         var td = $("<td class='day-item' date='" + dateVal + "'>" + dayInfo.day + "</td>");
@@ -174,8 +174,7 @@ define(function (require, exports, module) {
                         calendarOuter.show();
                     }))();
                 }, 100),
-                showMonthSelect:_.debounce(function () {
-                    calendarTable.html('');
+                showMonthSelect:_.throttle(function () {
                     var tbody = $("<tbody></tbody>");
                     var months = [ '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月' ];
                     for (var i = 0; i < 3; i++) {
@@ -193,13 +192,12 @@ define(function (require, exports, module) {
                         }
                         tbody.append(tr);
                     }
-                    calendarTable.append(tbody);
+                    calendarTable.html(tbody[0].outerHTML);
                     (_.once(function () {
                         calendarOuter.show();
                     }))();
                 }, 100),
-                showYearSelect:_.debounce(function () {
-                    calendarTable.html('');
+                showYearSelect:_.throttle(function () {
                     var tbody = $("<tbody></tbody>");
                     var currentYearDigit = this.currentMonth.year % 10;
                     for (var i = 0; i < 3; i++) {
@@ -218,7 +216,7 @@ define(function (require, exports, module) {
                         }
                         tbody.append(tr);
                     }
-                    calendarTable.append(tbody);
+                    calendarTable.html(tbody[0].outerHTML);
                     (_.once(function () {
                         calendarOuter.show();
                     }))();
@@ -233,7 +231,7 @@ define(function (require, exports, module) {
                 yearSelect:function (func) {
                     this.yearSelectHandler = func;
                 },
-                onItemClick:_.debounce(function (clickedElement) {
+                onItemClick:_.throttle(function (clickedElement) {
                     if (this.type == 'day') {
                         var date = $(clickedElement).attr('date');
                         var tmp = date.split('-');
@@ -278,7 +276,6 @@ define(function (require, exports, module) {
         };
         var calendarState = new CalendarClass(datePickHandler);
         calendarState.onChangePage();
-
         $(".date-item").live('click', function () {
             calendarState.onItemClick(this);
         });
@@ -295,7 +292,7 @@ define(function (require, exports, module) {
             calendarState.backToDoday();
         });
 
-        currentPageSelectShow.click(_.debounce(function () {
+        currentPageSelectShow.click(_.throttle(function () {
             calendarState.triggerTypeChange();
         }, 200));
 
