@@ -1,4 +1,5 @@
 define(function (require, exports, module) {
+    var LunarCalendar = require('./lunar-calendar').LunarCalendar;
     var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
     var DayInfo = function (date) {
         return {
@@ -10,7 +11,8 @@ define(function (require, exports, module) {
             hour:date.getHours(),
             minute:date.getMinutes(),
             second:date.getSeconds(),
-            date:date
+            date:date,
+            lunar: new LunarCalendar(date.getFullYear(), date.getMonth())[date.getDate() - 1]
         };
     };
     exports.DayInfo = DayInfo;

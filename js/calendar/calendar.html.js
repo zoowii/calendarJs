@@ -1,16 +1,19 @@
 define(function (require, exports, module) {
     exports.create = create;
+
+    var calendar = require('./lunar-calendar');
+    var today = calendar.getCurrentDayInfo();
+    var firstDayOfCurrent = new Date();
+    firstDayOfCurrent.setDate(1);
+
     function create(calendarElement, datePickHandler) {
-        var calendar = require('./calendar');
-        var today = calendar.getCurrentDayInfo();
-        window.today = today;
-        var firstDayOfCurrent = new Date();
-        firstDayOfCurrent.setDate(1);
+
+
 
         var currentPageSelectShow = $("<span class='calendar-page-title cursor-default'></span>");
         var calendarOuter = $(calendarElement);
         calendarOuter.html('');
-        var outer1 = $("<div></div>");
+        var outer1 = $("<div style='height:25px;'></div>");
         var previousBtn = $("<span class='calendar-btn previous-page-btn cursor-default'>&lArr;</span>");
         var nextBtn = $("<span class='calendar-btn next-page-btn cursor-default'>&rArr;</span>");
         var backToTodayBtn = $("<span class='back-to-today-btn cursor-default'>Today</span>");
@@ -19,13 +22,18 @@ define(function (require, exports, module) {
         outer1.append(backToTodayBtn);
         outer1.append(nextBtn);
         calendarOuter.append(outer1);
+
+        var monthTable = _initMonthTable();
+        var yearTable = _initYearTable();
         var calendarTable = $("<table class='calendar-table'></table>");
         calendarOuter.append(calendarTable);
+        calendarOuter.append(monthTable);
+        calendarTable.append(yearTable);
+
+
 
         var log = _.bind(console.log, console);
-        var CalendarClass = function (dateSelectHandler) {
-
-            return {
+        var calendarState = {
                 daySelectHandler:dateSelectHandler,
                 monthSelectHandler:undefined,
                 yearSelectHandler:undefined,
@@ -174,53 +182,12 @@ define(function (require, exports, module) {
                         calendarOuter.show();
                     }))();
                 }, 100),
-                showMonthSelect:_.throttle(function () {
-                    var tbody = $("<tbody></tbody>");
-                    var months = [ '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月' ];
-                    for (var i = 0; i < 3; i++) {
-                        var tr = $("<tr></tr>");
-                        for (var j = 0; j < 4; j++) {
-                            var td = $("<td></td>");
-                            td.text(months[4 * i + j]);
-                            if (4 * i + j + 1 == this.today.month && this.currentMonth.year == this.today.year) {
-                                td.addClass('today-month-item');
-                            }
-                            td.addClass('month-item');
-                            td.addClass('date-item');
-                            td.attr('data', 4 * i + j + 1);
-                            tr.append(td);
-                        }
-                        tbody.append(tr);
-                    }
-                    calendarTable.html(tbody[0].outerHTML);
-                    (_.once(function () {
-                        calendarOuter.show();
-                    }))();
-                }, 100),
-                showYearSelect:_.throttle(function () {
-                    var tbody = $("<tbody></tbody>");
-                    var currentYearDigit = this.currentMonth.year % 10;
-                    for (var i = 0; i < 3; i++) {
-                        var tr = $("<tr></tr>");
-                        for (var j = 0; j < 4; j++) {
-                            var y = calendar.yearsAround(this.currentMonth, i * 4 + j - 3);
-                            var td = $("<td></td>");
-                            if (y.year == this.today.year) {
-                                td.addClass('today-year-item');
-                            }
-                            td.addClass('year-item');
-                            td.addClass('date-item');
-                            td.attr('data', y.year);
-                            td.text(y.year);
-                            tr.append(td);
-                        }
-                        tbody.append(tr);
-                    }
-                    calendarTable.html(tbody[0].outerHTML);
-                    (_.once(function () {
-                        calendarOuter.show();
-                    }))();
-                }, 100),
+                showMonthSelect:function () {
+
+                },
+                showYearSelect:function () {
+
+                },
                 // 绑定事件
                 daySelect:function (func) {
                     this.daySelectHandler = func;
@@ -273,12 +240,7 @@ define(function (require, exports, module) {
                     }
                 }, 100)
             }
-        };
-        var calendarState = new CalendarClass(datePickHandler);
         calendarState.onChangePage();
-        $(".date-item").live('click', function () {
-            calendarState.onItemClick(this);
-        });
 
         previousBtn.click(function () {
             calendarState.previous();
