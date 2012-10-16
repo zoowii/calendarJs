@@ -20,10 +20,10 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="calendar.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="calendar.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/calendar.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="4" selection-start="494" selection-end="494" vertical-scroll-proportion="0.36190477">
+            <state line="16" column="4" selection-start="494" selection-end="494" vertical-scroll-proportion="-10.857142">
               <folding>
                 <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -32,10 +32,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="calendar.css" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="calendar.css" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/css/calendar.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="32" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0">
+            <state line="26" column="26" selection-start="460" selection-end="460" vertical-scroll-proportion="0.47188264">
               <folding />
             </state>
           </provider>
@@ -74,8 +74,8 @@
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/js/calendar/calendar.html.js" />
         <option value="$PROJECT_DIR$/js/app.js" />
-        <option value="$PROJECT_DIR$/css/calendar.css" />
         <option value="$PROJECT_DIR$/calendar.html" />
+        <option value="$PROJECT_DIR$/css/calendar.css" />
       </list>
     </option>
   </component>
@@ -363,20 +363,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/calendar.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="32" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/calendar.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="4" selection-start="494" selection-end="494" vertical-scroll-proportion="0.36190477">
+        <state line="16" column="4" selection-start="494" selection-end="494" vertical-scroll-proportion="-10.857142">
           <folding>
             <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/css/calendar.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="26" selection-start="460" selection-end="460" vertical-scroll-proportion="0.47188264">
+          <folding />
         </state>
       </provider>
     </entry>

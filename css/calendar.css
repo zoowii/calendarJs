@@ -24,11 +24,12 @@
 }
 
 .calendar-table .today-month-item {
-    background-color: purple;
+    background-color: white;
+    border: dotted 1px;
 }
 
 .calendar-table .today-year-item {
-    background-color: #ffb6c1;
+    background-color: white;
 }
 
 .calendar-table .today-item:hover {
