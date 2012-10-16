@@ -1,6 +1,6 @@
 .calendar-table {
     border: 1px solid #DDDDDD;
-    background-color: #EEEEEE;
+    background-color: #FFF;
     width: 200px;
     height: 200px;
 }
@@ -9,13 +9,18 @@
     text-align: center;
 }
 
+.calendar-table tr {
+    font-size: 13px;
+}
+
 .calendar-table td:hover {
-    background-color: #AEB0FF;
+    background-color: #CCCCCC;
     cursor: pointer;
 }
 
 .calendar-table .today-item {
-    background-color: #90ee90;
+    background-color: white;
+    border: dotted 1px;
 }
 
 .calendar-table .today-month-item {
@@ -27,7 +32,7 @@
 }
 
 .calendar-table .today-item:hover {
-    background-color: red;
+    background-color: #AABBCC;
 }
 
 .activities-area ul {
@@ -35,11 +40,26 @@
 }
 
 .calendar-table .lastMonthItem {
-    background-color: green;
+    background-color: white;
+    font-weight: lighter;
+    color: #888;
+}
+.calendar-table .lastMonthItem:hover {
+    background-color: white;
+    font-weight: normal;
+    color: #333;
 }
 
 .calendar-table .nextMonthItem {
-    background-color: #ffff00;
+    background-color: white;
+    font-weight: lighter;
+    color: #888;
+}
+
+.calendar-table .nextMonthItem:hover {
+    background-color: white;
+    font-weight: normal;
+    color: #333;
 }
 
 .cursor-default {

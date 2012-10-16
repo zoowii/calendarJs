@@ -1,5 +1,36 @@
 define(function (require, exports, module) {
     exports.create = create;
+    exports.datepicker = datepicker;
+    function datepicker(ele, datePickHandler, inputWidth) {
+        var inputWidth = inputWidth || 196;
+        var input = $("<input>");
+        input.css({width:inputWidth + 'px'});
+        var calendarOuter = $("<div></div>");
+        var outerId = 'calendar_outer_' + Math.random();
+        if ($(ele).attr('id') == undefined) {
+            $(ele).attr('id', outerId);
+        }
+        create(calendarOuter[0], _.throttle(function (dayInfo) {
+            datePickHandler(dayInfo);
+            calendarOuter.hide();
+        }, 100));
+        $(ele).html('');
+        $(ele).append(input);
+        $(ele).append(calendarOuter);
+        calendarOuter.hide();
+        input.focusin(function () {
+            calendarOuter.show();
+        });
+        $(document).click(function (e) {
+            var e = e || event;
+            console.log(e);
+            console.log($(e.target).parents());
+            if ($(e.target).parents("#" + $(ele).attr('id')).length === 0 && $(e.target).parents("html").length != 0) {
+                calendarOuter.hide();
+            }
+        });
+    }
+
     function create(calendarElement, datePickHandler) {
         var calendar = require('./calendar');
         var today = calendar.getCurrentDayInfo();
@@ -170,9 +201,6 @@ define(function (require, exports, module) {
                         }
                     }
                     calendarTable.append(month_table_body);
-                    (_.once(function () {
-                        calendarOuter.show();
-                    }))();
                 }, 100),
                 showMonthSelect:_.throttle(function () {
                     var tbody = $("<tbody></tbody>");
@@ -193,9 +221,6 @@ define(function (require, exports, module) {
                         tbody.append(tr);
                     }
                     calendarTable.html(tbody[0].outerHTML);
-                    (_.once(function () {
-                        calendarOuter.show();
-                    }))();
                 }, 100),
                 showYearSelect:_.throttle(function () {
                     var tbody = $("<tbody></tbody>");
@@ -217,9 +242,6 @@ define(function (require, exports, module) {
                         tbody.append(tr);
                     }
                     calendarTable.html(tbody[0].outerHTML);
-                    (_.once(function () {
-                        calendarOuter.show();
-                    }))();
                 }, 100),
                 // 绑定事件
                 daySelect:function (func) {
@@ -256,9 +278,6 @@ define(function (require, exports, module) {
                         this.type = 'day';
                         var dateInfo = new calendar.DayInfo(tmpDay);
                         this.changePage(dateInfo);
-                        if (_.isFunction(this.monthSelectHandler)) {
-                            this.monthSelectHandler(dateInfo);
-                        }
                     } else if (this.type == 'year') {
                         var year = $(clickedElement).attr('data');
                         var tmpDay = new Date(this.currentMonth.date);
@@ -267,16 +286,14 @@ define(function (require, exports, module) {
                         this.type = 'month';
                         var dateInfo = new calendar.DayInfo(tmpDay);
                         this.changePage(dateInfo);
-                        if (_.isFunction(this.yearSelectHandler)) {
-                            this.yearSelectHandler(dateInfo);
-                        }
                     }
                 }, 100)
             }
         };
-        var calendarState = new CalendarClass(datePickHandler);
+        var calendarState = CalendarClass(datePickHandler);
         calendarState.onChangePage();
-        $(".date-item").live('click', function () {
+        $(calendarElement).show();
+        $(calendarElement).find(".date-item").live('click', function () {
             calendarState.onItemClick(this);
         });
 
