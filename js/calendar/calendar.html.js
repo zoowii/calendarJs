@@ -10,10 +10,11 @@ define(function (require, exports, module) {
         if ($(ele).attr('id') == undefined) {
             $(ele).attr('id', outerId);
         }
-        create(calendarOuter[0], _.throttle(function (dayInfo) {
-            datePickHandler(dayInfo);
-            calendarOuter.hide();
-        }, 100));
+        create(calendarOuter[0], _.throttle(function(dayInfo) {
+			input.val(dayInfo.year + '-' + dayInfo.month + '-' + dayInfo.day);
+			calendarOuter.hide();
+			datePickHandler(dayInfo);
+		}, 100));
         $(ele).html('');
         $(ele).append(input);
         $(ele).append(calendarOuter);
@@ -23,8 +24,6 @@ define(function (require, exports, module) {
         });
         $(document).click(function (e) {
             var e = e || event;
-            console.log(e);
-            console.log($(e.target).parents());
             if ($(e.target).parents("#" + $(ele).attr('id')).length === 0 && $(e.target).parents("html").length != 0) {
                 calendarOuter.hide();
             }
